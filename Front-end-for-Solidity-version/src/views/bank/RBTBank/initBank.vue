@@ -42,7 +42,8 @@
 </template>
 
 <script>
-import getContract from "../../../../abis/index"
+import getContract from "../../../utils/abiUtil"
+
 export default {
   name: "initBank",
 
@@ -59,26 +60,24 @@ export default {
   methods: {
 
      async Complete() {
+     
+       this.RbBankOrchestrator = getContract.getContractAddress("RbBankOrchestrator")
       await this.$store.dispatch("RbBankOrchestrator/init", this.username).then(() => {
         this.$store.dispatch("RbBankOrchestrator/bank").then(res => {
           console.log(res)
           this.bankAddr = res
-          this.$store.dispatch("RbtDeposit721/init", this.bankAddr).then(res => {
-            console.log(res)
-          })
-        })
       })
-      this.nftAddr = getContract.getContractAddress("RbtDeposit721")
-      await this.$store.dispatch("ERC20Orchestrator/init",this.username).then(res=>{
-        console.log(res)
-        this.$store.dispatch("RbBankOrchestrator/input", {
-          _rbt: getContract.getContractAddress("RBT"),
-          _deposits: this.nftAddr
-        }).then(res => {
-          console.log(res)
-        })
-      })
+      // this.nftAddr = getContract.getContractAddress("RbtDeposit721")
+      // await this.$store.dispatch("ERC20Orchestrator/init",this.username).then(res=>{
+      //   console.log(res)
+      //   this.$store.dispatch("RbBankOrchestrator/input", {
+      //     _rbt: getContract.getContractAddress("RBT"),
+      //     _deposits: this.nftAddr
+      //   }).then(res => {
+      //     console.log(res)
+      //   })
 
+      })
     }
   }
 }
@@ -87,6 +86,7 @@ export default {
 <style lang="scss" scoped>
 
 .rbt-bank {
+  min-height: calc(100vh - 160px);
   .rainbow-panel {
     margin: -60px auto 30px;
     width: 1200px;

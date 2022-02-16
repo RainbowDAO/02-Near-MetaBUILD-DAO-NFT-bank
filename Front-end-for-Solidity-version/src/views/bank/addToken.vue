@@ -6,34 +6,34 @@
         <div class="name">
           TOKEN NAME
         </div>
-        <input type="text" placeholder="ADDRESS">
+        <input type="text" v-model = "tokenName" placeholder="NAME">
       </div>
       <div class="item">
         <div class="name">
           SYMBOL
         </div>
-        <input type="text" placeholder="MOT">
+        <input type="text" v-model = "tokenSymbol" placeholder="SYMBOL">
       </div>
       <div class="item">
         <div class="name">
           AMOUNT
         </div>
-        <input type="text" placeholder="ENTER">
+        <input type="text" v-model = "tokenAmount" placeholder="ENTER">
       </div>
       <div class="item">
         <div class="name">
           DECIMALS
         </div>
-        <input type="text" placeholder="10">
+        <input type="text" v-model = "tokenDecimals" placeholder="18">
       </div>
       <div class="item">
         <div class="name">
           TOKEN HOLDERS
         </div>
-        <input type="text" placeholder="Account address">
+        <input type="text" v-model = "userAddress" placeholder="Account address">
       </div>
     </div>
-    <div class="complete">
+    <div class="complete" @click = "Complete">
       Complete
     </div>
   </div>
@@ -41,8 +41,34 @@
 </template>
 
 <script>
+// import getContract from "../../../utils/abiUtil"
+
 export default {
-name: "addToken"
+  name: "initBank",
+
+  data() {
+    return {
+      tokenName: undefined,
+      tokenSymbol: undefined,
+      tokenDecimals:undefined,
+      tokenAmount: undefined,
+      userAddress: undefined,
+    }
+  },
+  methods: {
+
+     async Complete() {
+     
+      //  this.erc20Factory = getContract.getContractAddress("erc20Factory")
+       
+      await this.$store.dispatch("erc20Factory/creatToken", this.tokenName,this.tokenSymbol,this.tokenDecimals,this.tokenAmount,this.userAddress).then(() => {
+        this.$store.dispatch("RbBankOrchestrator/bank").then(res => {
+          console.log(res)
+          this.bankAddr = res
+      })
+    })
+    }
+  }
 }
 </script>
 

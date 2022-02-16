@@ -14,7 +14,7 @@ const routes = [
     {
         path: '/',
         component: layout,
-        redirect: '/RBTBank',
+        redirect: '/initBank',
 
         children: [
             //    bank

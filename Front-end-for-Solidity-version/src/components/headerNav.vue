@@ -3,7 +3,7 @@
   <div class="nav-box">
     <ul class = "navbar-nav">
       <li class="a-box" :class="{'active':$route.path=='/addToken'}" @click="$router.push({name:'addToken'})">
-        <a class = "cover" href="#addToken"> Creat Token</a>
+        <a class = "cover" href="#addToken"> AddToken</a>
       </li>
       <li class="a-box" :class="{'active':$route.path=='/RBTBank'}" @click="$router.push({name:'RBTBank'})">
         <a class = "cover" href="#RBTBank"> BANK</a>

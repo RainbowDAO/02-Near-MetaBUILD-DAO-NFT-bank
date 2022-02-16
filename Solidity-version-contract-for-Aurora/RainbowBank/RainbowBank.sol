@@ -25,9 +25,13 @@ contract RainbowBank{
     }
 
     modifier onlyAdmin(){
+        
         require(msg.sender == manager, "u are not manager");
+        
         _;
+        
     }
+    
     function init(address token , address _deposits)  external {
         token20 = token;
         deposit=IRbtDeposit721(_deposits);

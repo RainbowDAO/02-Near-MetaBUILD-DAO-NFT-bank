@@ -17,6 +17,11 @@
         </div>
       </template>
     </RainbowPanel>
+    <RainbowPanel class="my-order">
+      <template v-slot:name>
+        My Order
+      </template>
+    </RainbowPanel>
     <el-dialog
         title="Borrow Message"
         :visible.sync="buyDialog"
@@ -46,7 +51,7 @@
 import {mapGetters} from "vuex";
 // import moment from "moment";
 import TableItem from "../../../components/TableItem";
-import getContract from "../../../../abis/index"
+import getContract from "../../../utils/abiUtil"
 
 export default {
   name: "borrowingMarket",

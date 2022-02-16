@@ -7,7 +7,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "storeUtils": "node ./src/utils/storeUtils.js"
+    "storeUtils": "node ./src/utils/storeUtils.js",
+    "abiUtils": "node ./src/utils/abiUtils.js"
   },
   "dependencies": {
     "animate.css": "^4.1.1",

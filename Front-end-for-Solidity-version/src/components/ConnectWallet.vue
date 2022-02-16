@@ -1,22 +1,24 @@
 <template>
   <div class="connectWallet">
     <button @click="showWallet" v-show="isConnected" class="button-connect">
+      <div class="red-box">
+      </div>
       {{ account.substr(0, 6) + '...' + account.substr(39, 3) }}
     </button>
     <button size="mini" @click="showWallet" v-show="!isConnected" class="button-connect">
-      Connect Kovan
+      Connect Aurora
     </button>
-    <div v-show="isShowConnectStatus" class="connect-panel " @click="isShowConnectStatus=false;$emit('changeState')">
+    <div v-show="isShowConnectStatus" class="connect-panel " @click="isShowConnectStatus=false">
       <div class="mask"></div>
       <div class="connect-status-box animate__animated  animate__backInDown" @click.stop>
         Connected with {{ connectArr[connectIdx] }}
         <div class="connect-status" @click="disConnect" v-show="connectIdx!=1">
-          DISCONNECT
+          disconnect
         </div>
       </div>
     </div>
 
-    <div class="connect-panel" v-show="isShowConnect" @click="isShowConnect=false;$emit('changeState')">
+    <div class="connect-panel" v-show="isShowConnect" @click="isShowConnect=false">
       <div class="mask"></div>
       <div class="content  animate__animated  animate__backInDown" @click.stop>
         <div class="item" @click="connectWallet(1)">
@@ -24,29 +26,18 @@
           <div class="name">MetaMask</div>
           <div class="info">Connect to your MetaMask Wallet</div>
         </div>
-        <div class="item" @click="connectWallet(2)">
-          <div class="img"></div>
-          <div class="name">WalletConnect</div>
-          <div class="info">Scan with WalletConnect to connect</div>
-        </div>
-        <div class="item" @click="connectWallet(3)">
-          <div class="img"></div>
-          <div class="name">Fortmatic</div>
-          <div class="info">Connect with your Fortmatic account</div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// import WalletConnectProvider from "@walletconnect/web3-provider";
-// import Fortmatic from "fortmatic";
+
+import getWeb3 from "../utils/getWeb3"
 import {mapGetters} from "vuex"
 
 export default {
   name: "ConnectWallet",
-  props:['changeState'],
   data() {
     return {
       connectIdx: 0,
@@ -63,9 +54,7 @@ export default {
     ]),
   },
   created() {
-    if(localStorage.getItem('wallet')=='mateMask'){
-      this.connectWallet(1)
-    }
+    this.connectWallet(1)
   },
   methods: {
     loginOut() {
@@ -74,64 +63,59 @@ export default {
     async connectWallet(idx) {
       this.connectIdx = idx
       this.isLoading = true
+
+
       window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{chainId: '0x2a'}],
-      });
+        method: 'wallet_addEthereumChain',
+        params: [{
+          chainId: "0x4E454153",
+          chainName: "aurora",
+          rpcUrls: [
+            "https://testnet.aurora.dev",
+          ],
+          iconUrls: [
+            ""
+          ],
+          blockExplorerUrls: [
+            "https://explorer.testnet.aurora.dev/"
+          ],
+          nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
+            decimals: 18
+          }
+        }]
+      })
       if (idx == 1) {
-        localStorage.setItem('wallet', 'mateMask')
         if (typeof window.ethereum == 'undefined') {
-          this.$message.error("download metamask")
+          this.$message.error("down metamask")
         }
         await window.ethereum.enable()
         window.ethereum.on('accountsChanged', (accounts) => {
-          // Handle the new accounts, or lack thereof.
-          // "accounts" will always be an array, but it can be empty.
           this.$store.commit('app/SET_ACCOUNT', accounts[0])
         });
 
-        //注册获取信息
         this.registerWeb3().then(() => {
           this.isShowConnect = false
-          this.$emit('changeState')
         })
         this.isShowConnect = false
-        this.$emit('changeState')
-      } else if (idx == 2) {
-        console.log(2)
-        // const provider = new WalletConnectProvider({
-        //   infuraId: "c6a79a305012436a93a9be7f8e1f0def",
-        // });
-        // await provider.enable();
-        // this.provider = provider
-        // this.registerWeb3( provider).then(() => {
-        //   this.isShowConnect = false
-        // }).catch(() => {
-        //   this.isShowConnect = false
-        // })
-      } else {
-        console.log(3)
-        // let fm = new Fortmatic('pk_live_F67ECA9EF49113A2');
-        // this.provider = fm.getProvider()
-        // this.isLoading = true
-        // this.registerWeb3(fm.getProvider()).then(() => {
-        //   console.log(this.$store.state.app)
-        //   this.isShowConnect = false
-        //   this.isLoading = false
-        // }).catch(() => {
-        //   this.isShowConnect = false
-        //   this.isLoading = false
-        // })
       }
     },
     registerWeb3(provider) {
-      return this.$store.dispatch("app/registerWeb3",provider)
+      return new Promise(resolve => {
+        getWeb3(provider).then(result => {
+          localStorage.setItem("daoFactoryAccount", result.account)
+          this.$store.commit("app/SET_ACCOUNT", result.account)
+          this.$store.commit("app/SET_ISCONNECT", true)
+          this.$store.commit("app/SET_Balance", result.ethBalance)
+          this.$store.commit("app/SET_Web3", result.web3Instance.web3())
+          resolve(result)
+        })
+      })
     },
     showWallet() {
-       window.ethereum.enable()
-      this.$emit('changeState',true)
       if (this.isConnected) {
-        this.isShowConnectStatus = true
+        this.isShowConnectStatus = false
       } else {
         this.isShowConnect = true
       }
@@ -143,32 +127,41 @@ export default {
         this.$store.dispatch("app/loginOutWeb3")
         this.connectIdx = 0
       }
-      this.$emit('changeState')
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@/styles/variables.scss";
 .connectWallet {
   color: #2c3e50;
   display: flex;
 
   .button-connect {
+    padding: 0 20px;
     cursor: pointer;
     line-height: 0;
     height: 30px;
     opacity: 1;
-    background: linear-gradient(270deg, $purple, #ec0b6a);
+    background: rgba(255,255,255,0.20);
     border-radius: 10px;
     color: white;
     border: none;
-    box-shadow: 0px 3px 6px 0px rgba(128, 4, 149, 0.30);
+    display: flex;
+    align-items: center;
+    .red-box{
+      width: 8px;
+      height: 8px;
+      background: #ff1f84;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
   }
-  .button-connect:active{
+
+  .button-connect:active {
     border: none;
   }
+
   .connect {
     height: 200px;
     margin-top: 25%;
@@ -197,7 +190,6 @@ export default {
       width: 100%;
       height: 100%;
       position: fixed;
-      z-index: 1000;
       background-color: rgba(0, 0, 0, 0.4);
     }
 
@@ -303,7 +295,6 @@ export default {
     display: inline-block;
     cursor: pointer;
     color: #666666;
-    font-family: Arial;
     font-size: 15px;
     font-weight: bold;
     padding: 6px 24px;

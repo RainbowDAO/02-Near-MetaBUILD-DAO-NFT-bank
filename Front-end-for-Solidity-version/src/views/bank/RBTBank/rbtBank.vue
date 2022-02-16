@@ -148,7 +148,7 @@
 import TableItem from "../../../components/TableItem";
 import {mapGetters} from "vuex";
 import moment from "moment"
-import getContract from "../../../../abis";
+import getContract from "../../../utils/abiUtil";
 
 export default {
   name: "RBTBank",
@@ -368,6 +368,7 @@ export default {
 
 <style lang="scss" scoped>
 .rbt-bank {
+  min-height: calc(100vh - 160px);
   margin-top: -60px;
   .rbt-deposit {
     margin-top: 20px;
