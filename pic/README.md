@@ -1,2 +1,1 @@
-
-pic
+picture file
