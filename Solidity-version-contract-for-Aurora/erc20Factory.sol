@@ -460,10 +460,6 @@ contract ERC20Factory{
         tokenAddress[tokenName_] = token;
         return token;
     }
-
-    function transferfrom(address sender, address recipient, uint256 amount)public{
-        ERC20(newToken).transferFrom( sender, recipient, amount);
-    }
    
 }
 

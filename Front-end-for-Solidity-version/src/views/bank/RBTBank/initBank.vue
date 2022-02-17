@@ -60,7 +60,6 @@ export default {
   methods: {
 
      async Complete() {
-     
        this.RbBankOrchestrator = getContract.getContractAddress("RbBankOrchestrator")
       await this.$store.dispatch("RbBankOrchestrator/init", this.username).then(() => {
         this.$store.dispatch("RbBankOrchestrator/bank").then(res => {

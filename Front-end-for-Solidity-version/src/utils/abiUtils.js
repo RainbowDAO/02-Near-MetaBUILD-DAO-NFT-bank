@@ -50,12 +50,12 @@ for (let i = files.length - 1; i >= 0; i--) {
             let params = functionObj.inputs;
             let tempParamStr = ``
             for (let k = 0; k < params.length; k++) {
-                tempParamStr += params[k].name + ","
+                tempParamStr += params[k].name?params[k].name+ ",":'param'+k + ","
             }
             //   deal Methods end
 
             tempParamStr = tempParamStr.substr(0,tempParamStr.length-1)
-            actions += `${functionObj.name} ({rootState}${tempParamStr.length>0?',':''} ${tempParamStr}){
+            actions += `${functionObj.name} ({rootState}${tempParamStr.length>0?',{':''} ${tempParamStr} ${tempParamStr.length>0?"}":""}){
 					judgeToken(rootState)
 					return new Promise((resolve,reject) => {
 						state.token.methods.${functionObj.name}(${tempParamStr}).call().then(res => {
@@ -74,12 +74,12 @@ for (let i = files.length - 1; i >= 0; i--) {
             let params = functionObj.inputs;
             let tempParamStr = ``
             for (let k = 0; k < params.length; k++) {
-                tempParamStr += params[k].name + ","
+                tempParamStr += params[k].name?params[k].name+ ",":'param'+k + ","
             }
             // deal Methods end
 
             tempParamStr = tempParamStr.substr(0,tempParamStr.length-1)
-            actions += `${functionObj.name} ({rootState}${tempParamStr.length>0?',':''} ${tempParamStr}){
+            actions += `${functionObj.name} ({rootState}${tempParamStr.length>0?',{':''} ${tempParamStr} ${tempParamStr.length>0?"}":""}){
                         judgeToken(rootState)
                         return new Promise((resolve,reject) => {
                             state.token.methods.${functionObj.name}(${tempParamStr}).estimateGas({
@@ -106,12 +106,12 @@ for (let i = files.length - 1; i >= 0; i--) {
             let params = functionObj.inputs;
             let tempParamStr = ``
             for (let k = 0; k < params.length; k++) {
-                tempParamStr += params[k].name + ","
+                tempParamStr += params[k].name?params[k].name+ ",":'param'+k + ","
             }
             // deal params end
 
             tempParamStr = tempParamStr.substr(0,tempParamStr.length-1)
-            actions += `${functionObj.name} ({rootState}, value ${tempParamStr.length>0?',':''} ${tempParamStr}){
+            actions += `${functionObj.name} ({rootState}${tempParamStr.length>0?',{':''} ${tempParamStr}${tempParamStr.length>0?"}":""}){
                         judgeToken(rootState)
                         return new Promise((resolve,reject) => {
                             state.token.methods.${functionObj.name}(${tempParamStr}).estimateGas({

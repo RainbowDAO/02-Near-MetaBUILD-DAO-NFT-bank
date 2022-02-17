@@ -36,37 +36,49 @@
     <div class="complete" @click = "Complete">
       Complete
     </div>
+    <div>
+    <B>your token address is</B> :{{tokenAddress}}
+    </div>
   </div>
 </div>
 </template>
 
 <script>
-// import getContract from "../../../utils/abiUtil"
+import getContract from "../../utils/abiUtil"
 
 export default {
   name: "initBank",
 
   data() {
     return {
-      tokenName: undefined,
-      tokenSymbol: undefined,
-      tokenDecimals:undefined,
-      tokenAmount: undefined,
-      userAddress: undefined,
+      tokenName: 'name',
+      tokenSymbol: 'symbol',
+      tokenDecimals:0,
+      tokenAmount: 0,
+      userAddress: 'address',
+      tokenAddress:'tokenAddress',
     }
   },
   methods: {
-
-     async Complete() {
-     
-      //  this.erc20Factory = getContract.getContractAddress("erc20Factory")
-       
-      await this.$store.dispatch("erc20Factory/creatToken", this.tokenName,this.tokenSymbol,this.tokenDecimals,this.tokenAmount,this.userAddress).then(() => {
-        this.$store.dispatch("RbBankOrchestrator/bank").then(res => {
+     Complete() {
+       this.erc20Factory = getContract.getContractAddress("erc20Factory");
+      //  console.log(this.erc20Factory);
+       this.$store.dispatch("erc20Factory/creatToken", {
+        tokenName_:this.tokenName,
+        symbol_:this.tokenSymbol,
+        decimals_:this.tokenDecimals,
+        owner_:this.userAddress,
+        totalSupply_:this.tokenAmount
+}).then(() => {
+        this.$store.dispatch("erc20Factory/newToken").then(res => {
           console.log(res)
-          this.bankAddr = res
+          this.tokenAddress = res
       })
     })
+         this.nftAddr = getContract.getContractAddress("RbtDeposit721")
+        //  console.log(this.nftAddr);
+          this.newRainbowBank = getContract.getContractByToken("RbBankOrchestrator","0xC8C40976B19F737869Db914D9730EbfB45117A5A","6")
+          console.log(this.newRainbowBank)
     }
   }
 }
