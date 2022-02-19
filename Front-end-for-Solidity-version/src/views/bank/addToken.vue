@@ -77,8 +77,14 @@ export default {
     })
          this.nftAddr = getContract.getContractAddress("RbtDeposit721")
         //  console.log(this.nftAddr);
-          this.newRainbowBank = getContract.getContractByToken("RbBankOrchestrator","0xC8C40976B19F737869Db914D9730EbfB45117A5A","6")
+          this.newRainbowBank = getContract.getContractByToken("RbBankOrchestrator","0xC8C40976B19F737869Db914D9730EbfB45117A5A","bank")
           console.log(this.newRainbowBank)
+          this.$store.dispatch("RbBankOrchestrator/input",{
+            _rbt:this.tokenAddress,
+            _deposits:this.nftAddr
+          }).then(res =>{
+            console.log(res)
+          })
     }
   }
 }
